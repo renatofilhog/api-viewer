@@ -14,6 +14,9 @@ import {MatButtonModule} from "@angular/material/button";
 import { PedidosComponent } from './pedidos/pedidos.component';
 import {MatSnackBarModule} from "@angular/material/snack-bar";
 import { HomeComponent } from './home/home.component';
+import {MatPaginatorModule} from "@angular/material/paginator";
+import {MatProgressSpinnerModule} from "@angular/material/progress-spinner";
+import {MatSortModule} from "@angular/material/sort";
 
 @NgModule({
   declarations: [
@@ -33,7 +36,10 @@ import { HomeComponent } from './home/home.component';
     ReactiveFormsModule,
     MatTableModule,
     MatButtonModule,
-    MatSnackBarModule
+    MatSnackBarModule,
+    MatPaginatorModule,
+    MatProgressSpinnerModule,
+    MatSortModule
   ],
   providers: [
 
