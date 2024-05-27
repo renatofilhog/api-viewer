@@ -1,0 +1,7 @@
+.container {
+  padding: 50px;
+  text-align: center;
+}
+.container button {
+  width: 200px; margin-right: 10px;
+}

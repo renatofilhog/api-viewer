@@ -1,0 +1,25 @@
+<div class="login-container">
+  <h1>Login</h1>
+  <form class="form-group" (ngSubmit)="authorizeCredentials()">
+    <div class="mat-form-field">
+      <h2>Username</h2>
+      <mat-form-field appearance="fill" style="width: 100%">
+        <mat-label>Insira o login</mat-label>
+        <input matInput [formControl]="username" class="form-field" required>
+        <mat-error *ngIf="username.invalid">{{ getErrorMessage() }}</mat-error>
+      </mat-form-field>
+    </div>
+
+    <div class="mat-form-field">
+      <h2>Senha</h2>
+      <mat-form-field appearance="fill" style="width: 100%">
+        <mat-label>Insira a senha</mat-label>
+        <input matInput [formControl]="password" class="form-field" type="password" required>
+        <mat-error *ngIf="password.invalid">{{ getErrorMessage() }}</mat-error>
+      </mat-form-field>
+    </div>
+
+    <button mat-raised-button color="primary">Login</button>
+
+  </form>
+</div>

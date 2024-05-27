@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import {TokenStorageService} from "./token/token-storage.service";
 
 @Component({
   selector: 'app-root',
@@ -6,5 +7,5 @@ import { Component } from '@angular/core';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  title = 'magento-view';
+  title = 'magento-angular-app';
 }

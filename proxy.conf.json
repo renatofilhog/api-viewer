@@ -1,0 +1,10 @@
+{
+  "/magento": {
+    "target": "https://hml.locmed.com.br",
+    "secure": false,
+    "changeOrigin": true,
+    "pathRewrite": {
+      "^/magento": ""
+    }
+  }
+}
