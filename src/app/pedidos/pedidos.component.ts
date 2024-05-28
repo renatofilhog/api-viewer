@@ -14,9 +14,9 @@ import {Router} from "@angular/router";
 })
 export class PedidosComponent implements AfterViewInit {
 
-  displayedColumns: string[] = ['created', 'state', 'number', 'title'];
+  displayedColumns: string[] = ['created_at','increment_id', 'email', 'total_qty_ordered', 'grand_total'];
   exampleDatabase: ExampleHttpDatabase | null = null;
-  data: GithubIssue[] = [];
+  data: MagentoOrder[] = [];
 
   resultsLength = 0;
   isLoadingResults = true;
@@ -32,7 +32,7 @@ export class PedidosComponent implements AfterViewInit {
     ) {}
 
   ngAfterViewInit() {
-    this.exampleDatabase = new ExampleHttpDatabase(this._httpClient);
+    this.exampleDatabase = new ExampleHttpDatabase(this._httpClient, this.tokenStorage);
 
     this.sort.sortChange.subscribe(() => (this.paginator.pageIndex = 0));
 
@@ -45,7 +45,15 @@ export class PedidosComponent implements AfterViewInit {
             this.sort.active,
             this.sort.direction,
             this.paginator.pageIndex,
-          ).pipe(catchError(() => observableOf(null)));
+          ).pipe(
+            catchError(err => {
+              console.error(err);
+              if (err.status == 401) {
+                this.tokenStorage.resetTokenFromCookie()
+              }
+              return observableOf(null);
+            })
+          );
         }),
         map(data => {
           // Flip flag to show that loading has finished.
@@ -87,16 +95,33 @@ export interface GithubIssue {
   title: string;
 }
 
+export interface MagentoOrders {
+  items: MagentoOrder[];
+  total_count: number;
+}
+
+export interface MagentoOrder {
+  created_at: string;
+  increment_id: string;
+  customer_email: string;
+  grand_total: number;
+  total_qty_ordered: number;
+}
+
 /** An example database that the data source uses to retrieve data for the table. */
 export class ExampleHttpDatabase {
-  constructor(private _httpClient: HttpClient) {}
+  constructor(private _httpClient: HttpClient, private tokenStorage: TokenStorageService) {}
 
-  getRepoIssues(sort: string, order: SortDirection, page: number): Observable<GithubApi> {
-    const href = '/apitest';
-    const requestUrl = `${href}?q=repo:angular/components&sort=${sort}&order=${order}&page=${
+  getRepoIssues(sort: string, order: SortDirection, page: number): Observable<MagentoOrders> {
+    const href = '/magento/';
+    const requestUrl = `${href}rest/V1/orders?searchCriteria[filterGroups][][filters][][field]=state&searchCriteria[filterGroups][0][filters][0][value]=complete&searchCriteria[pageSize]=30&searchCriteria[sortOrders][0][field]=${sort}&searchCriteria[sortOrders][0][direction]=${order}&searchCriteria[currentPage]=${
       page + 1
     }`;
 
-    return this._httpClient.get<GithubApi>(requestUrl);
+    const headers = {
+      'Authorization': 'Bearer ' + this.tokenStorage.getTokenFromCookie()
+    }
+
+    return this._httpClient.get<MagentoOrders>(requestUrl, {headers: headers});
   }
 }
