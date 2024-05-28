@@ -1,6 +1,9 @@
 # MagentoView
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 15.1.0.
+This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 15.1.0. Node version 18.16.1
+
+## Installing project
+Run `npm install` to install all the dependencies.
 
 ## Development server
 
