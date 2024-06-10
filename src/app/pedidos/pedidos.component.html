@@ -1,7 +1,15 @@
+<h2 *ngIf="data.length == 0 && !isLoadingResults">
+  Não há registros com este e-mail
+</h2>
+
 <div class="example-container mat-elevation-z8">
-
-
   <div class="example-table-container">
+    <div *ngIf="!isLoadingResults">
+      <mat-form-field>
+        <mat-label>E-mail</mat-label>
+        <input matInput (input)="onEmailInput($event)" placeholder="Digite o e-mail">
+      </mat-form-field>
+    </div>
 
     <table mat-table [dataSource]="data" class="example-table"
            matSort matSortActive="created_at" matSortDisableClear matSortDirection="desc">
@@ -42,7 +50,7 @@
     </table>
   </div>
 
-  <mat-paginator [length]="resultsLength" [pageSize]="30" aria-label="Select page of GitHub search results"></mat-paginator>
+  <mat-paginator [length]="resultsLength" [pageSize]="30" aria-label="Select page of GitHub search results" ></mat-paginator>
 </div>
 
 <button mat-raised-button color="accent" (click)="home()">Home</button>

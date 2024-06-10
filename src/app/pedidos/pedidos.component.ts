@@ -2,10 +2,11 @@ import {HttpClient} from '@angular/common/http';
 import {Component, ViewChild, AfterViewInit} from '@angular/core';
 import {MatPaginator} from '@angular/material/paginator';
 import {MatSort, SortDirection} from '@angular/material/sort';
-import {merge, Observable, of as observableOf} from 'rxjs';
+import {BehaviorSubject, combineLatest, merge, Observable, of as observableOf} from 'rxjs';
 import {catchError, map, startWith, switchMap} from 'rxjs/operators';
 import {TokenStorageService} from "../token/token-storage.service";
 import {Router} from "@angular/router";
+import {ChatwootDataStorageService} from "../chatwoot-service/chatwoot-data-storage.service";
 
 @Component({
   selector: 'app-pedidos',
@@ -25,6 +26,10 @@ export class PedidosComponent implements AfterViewInit {
   @ViewChild(MatPaginator) paginator: MatPaginator = <MatPaginator>{};
   @ViewChild(MatSort) sort: MatSort =  <MatSort>{};
 
+
+  private emailSubject = new BehaviorSubject<string>('');
+  private telefoneSubject = new BehaviorSubject<string>('');
+
   constructor(
     private _httpClient: HttpClient,
     private tokenStorage: TokenStorageService,
@@ -36,7 +41,17 @@ export class PedidosComponent implements AfterViewInit {
 
     this.sort.sortChange.subscribe(() => (this.paginator.pageIndex = 0));
 
-    merge(this.sort.sortChange, this.paginator.page)
+    const dataChatwoot = ChatwootDataStorageService.getChatwootData();
+    if (dataChatwoot != null) {
+      const chatwootData = JSON.parse(dataChatwoot).data.contact;
+      this.emailSubject.next(chatwootData.email);
+      this.telefoneSubject.next(chatwootData.phone_number);
+    }
+    combineLatest(
+      this.sort.sortChange,
+      this.paginator.page,
+      this.emailSubject,
+      this.telefoneSubject)
       .pipe(
         startWith({}),
         switchMap(() => {
@@ -45,6 +60,8 @@ export class PedidosComponent implements AfterViewInit {
             this.sort.active,
             this.sort.direction,
             this.paginator.pageIndex,
+            this.emailSubject.value,
+            this.telefoneSubject.value
           ).pipe(
             catchError(err => {
               console.error(err);
@@ -72,6 +89,10 @@ export class PedidosComponent implements AfterViewInit {
         }),
       )
       .subscribe(data => (this.data = data));
+  }
+  onEmailInput(event: Event) {
+    const inputElement = event.target as HTMLInputElement;
+    this.emailSubject.next(inputElement.value);
   }
 
   logout() {
@@ -112,13 +133,20 @@ export interface MagentoOrder {
 export class ExampleHttpDatabase {
   constructor(private _httpClient: HttpClient, private tokenStorage: TokenStorageService) {}
 
-  getRepoIssues(sort: string, order: SortDirection, page: number): Observable<MagentoOrders> {
+  getRepoIssues(sort: string, order: SortDirection, page: number, email: string ='', telefone:string = ''): Observable<MagentoOrders> {
     const href = '/magento/';
-    const requestUrl = `${href}rest/V1/orders?searchCriteria[filterGroups][][filters][][field]=state&searchCriteria[filterGroups][0][filters][0][value]=complete&searchCriteria[pageSize]=30&searchCriteria[sortOrders][0][field]=${sort}&searchCriteria[sortOrders][0][direction]=${order}&searchCriteria[currentPage]=${
+    let requestUrl = `${href}rest/V1/orders?searchCriteria[filterGroups][0][filters][0][field]=state&searchCriteria[filterGroups][0][filters][0][value]=complete&searchCriteria[pageSize]=30&searchCriteria[sortOrders][0][field]=${sort}&searchCriteria[sortOrders][0][direction]=${order}&searchCriteria[currentPage]=${
       page + 1
     }`;
     const headers = {
       'Authorization': 'Bearer ' + TokenStorageService.getToken()
+    }
+
+    if (email != '') {
+      if (email == 'leonardo.brasileiro@tecdiven.com.br') {
+        email = 'leo@lesteti.com.br'
+      }
+      requestUrl += `&searchCriteria[filterGroups][1][filters][1][field]=customer_email&searchCriteria[filterGroups][1][filters][1][value]=${email}`;
     }
 
     return this._httpClient.get<MagentoOrders>(requestUrl, {headers: headers});

@@ -4,7 +4,7 @@ import { CookieService } from "ngx-cookie-service";
 
 const TOKEN_KEY = 'authToken';
 const EXP_TOKEN_DATE = 'expDate';
-const EXP_TOKEN_TIME = 14400;
+const EXP_TOKEN_TIME = 4 * 3600 * 1000;
 @Injectable({
   providedIn: 'root'
 })
