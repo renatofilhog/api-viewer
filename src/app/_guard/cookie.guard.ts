@@ -22,6 +22,7 @@ export class CookieGuard implements CanActivate {
     if (tokenExists) {
       return true;
     } else {
+      TokenStorageService.logout();
       return this.router.createUrlTree(['/login']);
     }
   }
