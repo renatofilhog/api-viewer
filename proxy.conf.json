@@ -1,6 +1,6 @@
 {
   "/magento": {
-    "target": "https://hml.locmed.com.br",
+    "target": "https://ingresso-admin.beachpark.com.br",
     "secure": false,
     "changeOrigin": true,
     "pathRewrite": {
