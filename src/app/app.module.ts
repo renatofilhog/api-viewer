@@ -17,13 +17,15 @@ import { HomeComponent } from './home/home.component';
 import {MatPaginatorModule} from "@angular/material/paginator";
 import {MatProgressSpinnerModule} from "@angular/material/progress-spinner";
 import {MatSortModule} from "@angular/material/sort";
+import { ChatwootListenerComponent } from './chatwoot-listener/chatwoot-listener.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     LoginComponent,
     PedidosComponent,
-    HomeComponent
+    HomeComponent,
+    ChatwootListenerComponent
   ],
   imports: [
     BrowserModule,
