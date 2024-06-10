@@ -26,7 +26,7 @@ export class LoginComponent implements OnInit {
   }
 
   ngOnInit() {
-    if (this.tokenStorageService.getTokenFromCookie()) {
+    if (TokenStorageService.getToken()) {
       this.router.navigate(['/']);
     }
   }
@@ -46,7 +46,7 @@ export class LoginComponent implements OnInit {
     if (this.username.value != null && this.password.value != null) {
       this.tokenStorageService.authorizeCredentials(this.username.value?.toString(), this.password.value?.toString())
         .subscribe((response: any) => {
-          this.tokenStorageService.saveTokenToCookie(response);
+          TokenStorageService.saveToken(response);
           this.router.navigate(['/']);
         }, error => {
           this.openSnackBar(error.error.message, 'Fechar', ['error-snackbar']);

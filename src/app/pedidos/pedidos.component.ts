@@ -49,7 +49,7 @@ export class PedidosComponent implements AfterViewInit {
             catchError(err => {
               console.error(err);
               if (err.status == 401) {
-                this.tokenStorage.resetTokenFromCookie()
+                TokenStorageService.logout();
               }
               return observableOf(null);
             })
@@ -75,7 +75,7 @@ export class PedidosComponent implements AfterViewInit {
   }
 
   logout() {
-    this.tokenStorage.resetTokenFromCookie();
+    TokenStorageService.logout();
     this.router.navigate(['/login']);
   }
   home() {
@@ -117,9 +117,8 @@ export class ExampleHttpDatabase {
     const requestUrl = `${href}rest/V1/orders?searchCriteria[filterGroups][][filters][][field]=state&searchCriteria[filterGroups][0][filters][0][value]=complete&searchCriteria[pageSize]=30&searchCriteria[sortOrders][0][field]=${sort}&searchCriteria[sortOrders][0][direction]=${order}&searchCriteria[currentPage]=${
       page + 1
     }`;
-
     const headers = {
-      'Authorization': 'Bearer ' + this.tokenStorage.getTokenFromCookie()
+      'Authorization': 'Bearer ' + TokenStorageService.getToken()
     }
 
     return this._httpClient.get<MagentoOrders>(requestUrl, {headers: headers});

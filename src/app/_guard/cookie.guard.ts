@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot, UrlTree } from '@angular/router';
 import { Observable } from 'rxjs';
 import { CookieService } from 'ngx-cookie-service';
+import {TokenStorageService} from "../token/token-storage.service";
 
 @Injectable({
   providedIn: 'root'
@@ -16,9 +17,9 @@ export class CookieGuard implements CanActivate {
     route: ActivatedRouteSnapshot,
     state: RouterStateSnapshot): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
 
-    const cookieExists = this.cookieService.check('authToken');
+    const tokenExists = TokenStorageService.getToken();
 
-    if (cookieExists) {
+    if (tokenExists) {
       return true;
     } else {
       return this.router.createUrlTree(['/login']);

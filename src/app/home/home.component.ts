@@ -14,7 +14,7 @@ export class HomeComponent {
   ) { }
 
   logout() {
-    this.tokenStorageService.resetTokenFromCookie();
+    TokenStorageService.logout();
     window.location.reload();
   }
 
